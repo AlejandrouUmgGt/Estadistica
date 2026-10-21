@@ -1,0 +1,223 @@
+/* CAMBIO: estilos de la pantalla Nuevo análisis según Figma. */
+* {
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    background: #f9fafb;
+    color: #1b3c61;
+    font-family: Inter, Arial, sans-serif;
+}
+.barra {
+    min-height: 82px;
+    padding: 18px 48px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+.marca {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+}
+.marca strong {
+    font-size: 20px;
+}
+.marca > span:last-child {
+    font-size: 17px;
+    opacity: .65;
+}
+.isotipo {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    background: #1b3c61;
+    color: #299d95;
+    font-weight: bold;
+    display: grid;
+    place-items: center;
+}
+nav {
+    display: flex;
+    gap: 4px;
+}
+nav a {
+    padding: 8px 16px;
+    border-radius: 8px;
+    color: #1b3c61;
+    font-size: 18px;
+    text-decoration: none;
+}
+nav a.activo {
+    background: #1b3c61;
+    color: white;
+}
+.contenedor {
+    /* CAMBIO: aprovechar casi todo el ancho de la pantalla. */
+    width: 94%;
+    max-width: 1600px;
+    margin: 40px auto;
+}
+h1 {
+    font-size: 42px;
+    margin: 0 0 10px;
+}
+.descripcion {
+    font-size: 23px;
+    opacity: .7;
+    margin: 0 0 24px;
+}
+form {
+    padding: 36px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+label {
+    font-weight: 600;
+    font-size: 19px;
+}
+input, textarea {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px 18px;
+    font: 20px Inter, Arial, sans-serif;
+    color: #1b3c61;
+}
+input {
+    height: 60px;
+    margin-bottom: 10px;
+}
+textarea {
+    height: 260px;
+    resize: vertical;
+}
+input:focus, textarea:focus {
+    outline: 2px solid #299d95;
+    outline-offset: 1px;
+}
+.ayuda {
+    font-size: 17px;
+    opacity: .65;
+    margin: 8px 0;
+}
+.mensaje {
+    border: 1.5px solid #1b3c61;
+    border-radius: 8px;
+    padding: 14px;
+    background: #f9fafb;
+    font-size: 14px;
+}
+.mensaje[hidden] {
+    display: none;
+}
+.mensaje p {
+    margin: 4px 0 0;
+    font-size: 13px;
+}
+.acciones {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+button {
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 14px 24px;
+    font-weight: 600;
+    font-size: 19px;
+}
+.generar {
+    background: #299d95;
+    color: white;
+    border: 1px solid #299d95;
+}
+.limpiar {
+    background: white;
+    color: #1b3c61;
+    border: 1.5px solid #1b3c61;
+}
+@media (max-width: 940px) {
+    .contenedor {
+        width: calc(100% - 48px);
+        margin: 30px 24px;
+    }
+}
+@media (max-width: 600px) {
+    .barra {
+        padding: 16px;
+        flex-wrap: wrap;
+    }
+    nav {
+        width: 100%;
+    }
+    .contenedor {
+        width: calc(100% - 32px);
+        margin: 24px 16px;
+    }
+    h1 {
+        font-size: 30px;
+    }
+    .descripcion {
+        font-size: 18px;
+    }
+    label {
+        font-size: 17px;
+    }
+    input, textarea {
+        font-size: 18px;
+    }
+    textarea {
+        height: 210px;
+    }
+    form {
+        padding: 18px;
+    }
+    .acciones button {
+        flex: 1;
+    }
+}
+
+
+/* CAMBIO: mejorar la lectura del formulario en pantallas grandes y pequeñas. */
+body { font-size: 18px; }
+.mensaje { font-size: 18px; }
+.mensaje p { font-size: 16px; }
+@media (max-width: 600px) {
+    .barra { padding: 14px 16px; }
+    .marca { white-space: normal; flex-wrap: wrap; }
+    .marca strong { font-size: 18px; }
+    .marca > span:last-child { font-size: 15px; }
+    nav { flex-wrap: wrap; }
+    nav a { font-size: 16px; padding: 10px 12px; }
+    form { padding: 20px; }
+    button { font-size: 17px; }
+}
+
+
+/* CAMBIO: tamaño de presentación para que el formulario se vea desde lejos. */
+@media (min-width: 941px) {
+    .contenedor { width: 96%; max-width: 1900px; margin: 28px auto 60px; }
+    h1 { font-size: 54px; }
+    .descripcion { font-size: 29px; }
+    form { padding: 40px; gap: 20px; }
+    label { font-size: 24px; }
+    input, textarea { font-size: 25px; padding: 20px 24px; }
+    input { height: 76px; }
+    textarea { height: 320px; }
+    .ayuda { font-size: 21px; }
+    button { font-size: 24px; padding: 18px 32px; }
+    .marca strong { font-size: 25px; }
+    .marca > span:last-child { font-size: 21px; }
+    nav a { font-size: 22px; }
+    .isotipo { width: 52px; height: 52px; font-size: 27px; }
+}

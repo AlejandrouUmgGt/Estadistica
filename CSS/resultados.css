@@ -1,0 +1,331 @@
+/* Colores y distribución basados en Figma. */
+* {
+    box-sizing: border-box
+}
+
+body {
+    margin: 0;
+    background: #f9fafb;
+    color: #1b3c61;
+    font-family: Inter, Arial, sans-serif
+}
+
+.barra {
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 18px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px
+}
+
+.marca {
+    display: flex;
+    align-items: center;
+    gap: 10px
+}
+
+.marca small {
+    opacity: .65
+}
+
+.isotipo {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #1b3c61;
+    color: #299d95;
+    font-weight: bold
+}
+
+nav {
+    display: flex;
+    gap: 4px
+}
+
+nav a {
+    padding: 8px 16px;
+    text-decoration: none;
+    color: #1b3c61;
+    border-radius: 8px;
+    font-size: 14px
+}
+
+nav a.activo {
+    background: #1b3c61;
+    color: white
+}
+
+main {
+    max-width: 880px;
+    margin: 40px auto 70px
+}
+
+h1 {
+    font-size: 32px;
+    margin: 0 0 14px;
+    overflow-wrap: anywhere
+}
+
+h2 {
+    font-size: 18px;
+    margin: 0 0 16px
+}
+
+.subtitulo {
+    opacity: .7;
+    margin: 0 0 24px
+}
+
+.panel {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 28px;
+    margin: 24px 0
+}
+
+.boton {
+    display: inline-block;
+    text-decoration: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    border: 1.5px solid #1b3c61;
+    background: #fff;
+    color: #1b3c61;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer
+}
+
+.primario {
+    background: #299d95;
+    color: #fff;
+    border-color: #299d95
+}
+
+.aviso {
+    border: 1.5px solid #1b3c61;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    overflow-wrap: anywhere
+}
+
+.suave {
+    color: #217585;
+    font-size: 12px
+}
+
+.resumen {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px
+}
+
+.tarjeta {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 16px;
+    min-width: 0
+}
+
+.tarjeta small {
+    display: block;
+    font-size: 12px;
+    opacity: .7
+}
+
+.tarjeta strong {
+    display: block;
+    font-size: 24px;
+    margin: 3px 0
+}
+
+.tabla-contenedor {
+    overflow-x: auto
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+    font-size: 14px
+}
+
+.table th {
+    background: #1b3c61;
+    color: #fff;
+    text-align: right;
+    padding: 12px
+}
+
+.table td {
+    padding: 12px;
+    text-align: right;
+    border-bottom: 1px solid #e5e7eb
+}
+
+.table th:first-child,
+.table td:first-child {
+    text-align: left
+}
+
+.table tbody tr:nth-child(even) {
+    background: #f9fafb
+}
+
+.table tfoot td {
+    font-weight: 700;
+    background: #eef2f6;
+    border-top: 2px solid #1b3c61
+}
+
+.medidas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px
+}
+
+.formula {
+    font-size: 13px;
+    opacity: .75;
+    overflow-wrap: anywhere
+}
+
+.acciones {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap
+}
+
+.datos {
+    overflow-wrap: anywhere;
+    white-space: pre-wrap
+}
+
+.grafica {
+    position: relative;
+    width: 100%;
+    height: 320px;
+    min-height: 320px; 
+}
+
+.grafica canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+@media (max-width: 940px) {
+    main {
+        margin: 30px 24px
+    }
+}
+
+@media (max-width: 600px) {
+    .barra {
+        padding: 16px;
+        flex-wrap: wrap
+    }
+
+    nav {
+        width: 100%
+    }
+
+    main {
+        margin: 24px 16px
+    }
+
+    .panel {
+        padding: 18px
+    }
+
+    .resumen,
+    .medidas {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+    }
+
+    h1 {
+        font-size: 28px
+    }
+
+    .marca small {
+        font-size: 12px
+    }
+}
+
+
+/* CAMBIO: aprovechar el ancho de la pantalla y ampliar textos de resultados. */
+body { font-size: 18px; }
+.barra { min-height: 82px; }
+.marca { flex-wrap: wrap; }
+.marca strong { font-size: 20px; }
+.marca small { font-size: 17px; }
+.isotipo { width: 42px; height: 42px; font-size: 22px; }
+nav a { font-size: 18px; }
+main { width: 94%; max-width: 1600px; margin: 40px auto 70px; }
+h1 { font-size: 42px; }
+h2 { font-size: 26px; }
+.subtitulo { font-size: 22px; }
+.panel { padding: 32px; }
+.boton { font-size: 19px; padding: 14px 24px; }
+.aviso { font-size: 18px; }
+.suave { font-size: 16px; }
+.resumen { gap: 16px; }
+.tarjeta { padding: 22px; }
+.tarjeta small { font-size: 17px; }
+.tarjeta strong { font-size: 32px; }
+.table { font-size: 18px; }
+.table th, .table td { padding: 16px; }
+.medidas { gap: 16px; }
+.formula { font-size: 17px; line-height: 1.6; }
+.datos { font-size: 19px; line-height: 1.7; }
+.grafica { height: 420px; min-height: 420px; }
+@media (max-width: 940px) {
+    main { width: calc(100% - 48px); margin: 30px 24px; }
+    .resumen { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+    main { width: calc(100% - 32px); margin: 24px 16px; }
+    .barra { padding: 16px; flex-wrap: wrap; }
+    nav { width: 100%; flex-wrap: wrap; }
+    nav a { font-size: 16px; }
+    .panel { padding: 18px; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 22px; }
+    .subtitulo { font-size: 18px; }
+    .resumen, .medidas { grid-template-columns: 1fr; }
+    .tarjeta strong { font-size: 27px; }
+    .table { font-size: 16px; }
+    .grafica { height: 300px; min-height: 300px; }
+}
+
+
+/* CAMBIO: modo presentación; los resultados ocupan casi todo el monitor. */
+@media (min-width: 941px) {
+    main { width: 96%; max-width: 1900px; margin: 28px auto 70px; }
+    h1 { font-size: 54px; }
+    h2 { font-size: 32px; }
+    .subtitulo { font-size: 27px; }
+    .panel { padding: 36px; }
+    .resumen, .medidas { gap: 22px; }
+    .tarjeta { padding: 26px; }
+    .tarjeta small { font-size: 21px; }
+    .tarjeta strong { font-size: 38px; }
+    .formula { font-size: 22px; line-height: 1.7; }
+    .table { font-size: 22px; }
+    .table th, .table td { padding: 19px; }
+    .datos { font-size: 24px; }
+    .boton { font-size: 23px; padding: 18px 30px; }
+    .aviso { font-size: 22px; }
+    .grafica { height: 520px; min-height: 520px; }
+    .marca strong { font-size: 25px; }
+    .marca small { font-size: 21px; }
+    nav a { font-size: 22px; }
+    .isotipo { width: 52px; height: 52px; font-size: 27px; }
+}
