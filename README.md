@@ -1,202 +1,294 @@
 # Proyecto Estadística I
 
-Sistema web de análisis de datos agrupados. Universidad Mariano Gálvez de Guatemala.
+Sistema web para analizar **datos agrupados**. Proyecto académico de la Universidad Mariano Gálvez de Guatemala.
 
-## Etapa actual: pantalla Nuevo análisis
+**Sitio:** https://estadistica.viuai.qd.je/  
+**Diseño:** [Figma](https://www.figma.com/design/jE09iair5o1Q2ZeRImNVTG/Proyecto-Estadiditica)  
+**Última revisión del repositorio:** 20 de octubre de 2026.
 
-Se creó únicamente la primera pantalla del diseño de Figma. La pantalla Resultados, el historial y el histograma con Chart.js están pendientes. **No se han implementado todavía los cálculos estadísticos.**
+> **Estado importante:** este README describe la arquitectura prevista y lo que se observa en el código de la rama `master`. En la revisión actual **no aparecen** los archivos PHP de Joel, Obdulio y William, ni `JAVASCRIPT/KevinDaniloMoralesMejia.js`, aunque Nginx y la interfaz los referencian. Hasta restaurarlos o integrarlos, no puedo confirmar que la generación completa y el histograma funcionen en una instalación nueva. No he probado el VPS desde esta sesión.
 
-### HTML/index.html
-**Qué hace:** muestra una maqueta estática de Nuevo análisis, con título, datos, navegación y botones.
-**Cómo funciona:** las etiquetas `form`, `input` y `textarea` permiten escribir información. `action="../PHP/resultados.php"` indica la futura página receptora.
-**Cómo probarlo:** abrir HTML/index.html en un navegador y comprobar que se ve el formulario y que Limpiar borra los campos. Generar todavía no puede mostrar resultados.
+## 1. Qué hace mi proyecto
 
-### CSS/index.css
-**Qué hace:** define colores, tamaños, espacios y distribución.
-**Cómo funciona:** las clases `.barra`, `.contenedor`, `.acciones` y otras aplican el diseño de Figma. `@media` adapta el contenido a pantallas pequeñas.
-**Cómo probarlo:** abrir la pantalla en PC y reducir el ancho de la ventana; el formulario debe seguir siendo legible y los botones deben acomodarse.
+Ingreso un título y una serie de números. La aplicación valida los datos, los agrupa en intervalos, muestra una tabla de frecuencias y calcula medidas estadísticas poblacionales. También ofrece un histograma y opciones para guardar y consultar análisis en MySQL.
 
-### JAVASCRIPT/index.js
-**Qué hace:** comprueba visualmente que los datos tengan formato numérico y limpia los mensajes al pulsar Limpiar.
-**Cómo funciona:** espera a que cargue el HTML; escucha los eventos `submit` y `reset`. Usa una expresión regular para revisar cada valor y `Number.isFinite` para rechazar infinitos.
-**Cómo probarlo:** escribir `0 1 2 3 4 5 6 7 8 10` y pulsar Generar: no debe aparecer error de formato. Escribir `2 abc 5`: debe aparecer un mensaje que señale `abc`. Pulsar Limpiar: desaparecen los datos y el mensaje.
-**Importante:** la validación final deberá hacerse también en PHP; JavaScript puede desactivarse en el navegador. La coma separa números: `3,5` se interpreta como dos valores, no como decimal.
+Las pantallas públicas son:
 
-### PHP/index.php
-**Qué hace:** ofrece la misma pantalla como entrada PHP real.
-**Cómo funciona:** envía `titulo` y `datos` por GET a `PHP/resultados.php` cuando esa página exista. No necesita conectarse a MySQL.
-**Cómo probarlo:** visitar `https://viuai.qd.je/` cuando Nginx esté configurado para abrir `PHP/index.php`. Escribir datos y probar Limpiar y los mensajes. Generar no completará el análisis hasta crear `PHP/resultados.php`.
+- **`/` o `/index.html`:** formulario de Nuevo análisis.
+- **`/resultados`:** tabla, medidas, fórmulas e histograma.
+- **`/historial`:** lista de análisis guardados y botón Consultar.
 
-### PHP/conexion.php (existente, sin modificar)
-**Qué hace:** establece la conexión con la base de datos.
-**Cómo se utilizará:** los PHP que consulten o guarden análisis lo incluirán mediante `require_once 'conexion.php';`. La pantalla de entrada no necesita conexión.
-**Cómo probarlo:** se verificará en la etapa de base de datos sin mostrar credenciales.
+No utilizo `HTML/resultados.html` ni `HTML/historial.html`: esas maquetas se eliminaron. Las pantallas correspondientes se sirven con PHP.
 
-### Prueba de datos prevista para Resultados
-Entrada: `0 1 2 3 4 5 6 7 8 10`.
-Resultado esperado una vez implementados los cálculos: N=10, R=10, k usado=5, amplitud=2 y cinco clases con frecuencia 2.
+## 2. Tecnologías
 
-### Pendientes
-- Crear `PHP/resultados.php` con validación del servidor y las 12 fórmulas.
-- Crear la pantalla de resultados y su histograma con Chart.js.
-- Crear la pantalla de historial y el guardado en MySQL.
+| Parte | Tecnología | Para qué la utilizo |
+| --- | --- | --- |
+| Estructura | HTML | Formularios y contenido de las pantallas |
+| Diseño | CSS | Colores, tarjetas, tamaños grandes y adaptación móvil |
+| Interacción | JavaScript puro | Validación inicial, peticiones HTTP y presentación |
+| Servidor | PHP | APIs y páginas que entregan HTML |
+| Base de datos | MySQL/MariaDB con `mysqli` | Guardar y consultar análisis |
+| Histograma | Chart.js 4.4.7 | Dibujar barras de frecuencia |
+| Fórmulas | MathJax 3 | Mostrar fracciones, sumatorias, raíces y exponentes |
+| Despliegue | Docker Compose, PHP-FPM y Nginx | Publicar la aplicación |
 
-No se ha probado el proyecto en el VPS desde esta sesión.
+**Dependencias del navegador:** `PHP/resultados.php` incluye MathJax 3 y Chart.js 4.4.7 mediante CDN. En el código revisado también sigue apareciendo una referencia a `/JAVASCRIPT/chart.umd.js`, archivo que no figura en el directorio actual. Debo revisar esa referencia duplicada; no considero resuelto el histograma solo por haber añadido el CDN.
 
+## 3. Estructura actual del repositorio
 
-## Etapa Resultados e Historial (octubre 2026)
-
-### HTML/resultados.html (ELIMINADO: maqueta antigua)
-Archivo eliminado porque la pantalla real está en `PHP/resultados.php`, accesible por `/resultados`.
-
-### CSS/resultados.css
-Aplica los colores azul #1b3c61 y verde #299d95 de Figma, tarjetas, tabla desplazable y adaptación móvil. Prueba: abre Resultados y reduce el ancho de la ventana.
-
-### JAVASCRIPT/resultados.js
-`JAVASCRIPT/resultados.js` recibe la tabla de Obdulio y llama a `dibujar_histograma_kevin(tabla)`; el archivo de Kevin utiliza Chart.js (CDN) y un eje horizontal lineal. Prueba: abre `/resultados` desde Nuevo análisis y comprueba cinco barras de altura 2 con los datos `0 1 2 3 4 5 6 7 8 10`. Necesita internet para el CDN.
-
-### PHP/resultados.php
-Valida título y números del formulario; divide la serie en clases de Sturges, calcula R, k, A, xi, fi, Fi, hi, Hi, media, varianza poblacional, desviación, asimetría, curtosis y exceso. También guarda al pulsar Guardar, usando conexion.php, y consulta un registro con ?id=... sin recalcularlo. Prueba: en /index.html introduce título y 0 1 2 3 4 5 6 7 8 10, pulsa Generar y verifica N=10, R=10, k=5, A=2, media=5, varianza=8, desviación=2.8284, curtosis=1.7 y exceso=-1.3. Prueba con todos iguales: una clase, varianza cero y curtosis no definida. Prueba abc: debe rechazarse. Las consultas GET largas pueden superar el límite de URL: en ese caso hay que cambiar a POST previo aviso.
-
-### HTML/historial.html (ELIMINADO: maqueta antigua)
-Maqueta estática con ejemplos ilustrativos. Para registros reales se utiliza /historial.
-
-### CSS/historial.css
-Presenta filas blancas con título, fecha y botón Consultar, además de estado vacío y error. Prueba en móvil y PC.
-
-### JAVASCRIPT/historial.js
-Agrega nombres accesibles a los enlaces Consultar. No accede a MySQL. Prueba: inspecciona el atributo aria-label del botón.
-
-### PHP/historial.php
-Incluye conexion.php y consulta SELECT de la tabla analisis, del más reciente al más antiguo. Muestra lista o estado vacío/error y abre /resultados?id=N. Prueba: abre /historial antes y después de guardar un análisis. Necesita la tabla analisis en MySQL.
-
-### Tabla requerida en MySQL (en el servidor, desde tu cliente SQL)
-```sql
-CREATE TABLE IF NOT EXISTS analisis (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    titulo VARCHAR(200) NOT NULL,
-    fecha DATETIME NOT NULL,
-    datos_originales TEXT NOT NULL,
-    criterio_clases TEXT NOT NULL,
-    resultados TEXT NOT NULL
-);
+```text
+Proyecto_estadistica/
+├── HTML/
+│   └── index.html
+├── CSS/
+│   ├── index.css
+│   ├── resultados.css
+│   └── historial.css
+├── JAVASCRIPT/
+│   ├── index.js
+│   ├── resultados.js
+│   └── historial.js
+├── PHP/
+│   ├── index.php
+│   ├── resultados.php
+│   ├── historial.php
+│   ├── conexion.php
+│   └── DiegoAlejandroVasquezYol.php
+├── docker/
+│   └── nginx.conf
+├── Dockerfile
+├── docker-compose.yml
+├── README.md
+└── Datos prueba .md
 ```
 
-### Rutas públicas
-`/` y `/index.html` muestran el formulario HTML; `/resultados` ejecuta `PHP/resultados.php` y `/historial` ejecuta `PHP/historial.php`. Las rutas antiguas `/resultados.html` y `/historial.html` ya no están disponibles. `/PHP/*.php` se bloquea desde el navegador.
+**Archivos referenciados, pero ausentes en la revisión de `master`:**
 
-### Activar y comprobar Nginx
-En el servidor (SSH), tras sincronizar GitHub con el directorio del VPS: `docker compose exec nginx nginx -t`, después `docker compose restart nginx`. Comprueba con `curl -I http://127.0.0.1:8089/resultados` y `curl -I http://127.0.0.1:8089/historial` (200 esperado), y `curl -I http://127.0.0.1:8089/resultados.html`, `curl -I http://127.0.0.1:8089/historial.html` y `curl -I http://127.0.0.1:8089/PHP/conexion.php` (404 esperado). No se ha probado desde esta sesión en el VPS.
+- `PHP/JoelAdrianGalegoLopez.php`
+- `PHP/ObdulioAugustoFuentesFuentes.php`
+- `PHP/WilliamEliazarMateoDevian.php`
+- `JAVASCRIPT/KevinDaniloMoralesMejia.js`
+- `JAVASCRIPT/chart.umd.js`
 
+La carpeta `.env` no forma parte del código público: la configuración de la base de datos debe mantenerse privada. Los manuales `MANUAL_USUARIO.md` y `MANUAL_TECNICO.md` tampoco aparecen actualmente en la raíz de esta rama; no los presento como archivos existentes.
 
-## Compatibilidad con registros anteriores (octubre 2026)
+## 4. Qué hace cada archivo
 
-Los análisis antiguos guardan `tabla_frecuencias`, `k_usado`, `medidas.media`, `medidas.varianza`, `medidas.desviacion_estandar` y `forma`, mientras los nuevos usan `tabla`, `k` y las medidas en el nivel superior. PHP/resultados.php adapta el formato antiguo solo en memoria, sin modificar MySQL ni recalcular los valores históricos. PHP/historial.php muestra N como suma de fi cuando el JSON antiguo tiene `total_datos: null` y toma k de `k_usado`.
+### HTML y CSS
 
-**Cómo probar:** abre `/historial`: el registro Hola debe mostrar N=14 y k=5; Patoo debe mostrar N=8 y k=5. Pulsa Consultar en ambos: deben aparecer tabla, medidas y gráfica. Comprueba también un registro nuevo guardado desde `/resultados`. Si la columna `datos_originales` difiere del arreglo en JSON, se muestra un aviso; no se altera ningún registro.
+| Archivo | Qué hace |
+| --- | --- |
+| `HTML/index.html` | Muestra título, campo de datos, botones Generar/Limpiar y navegación. |
+| `CSS/index.css` | Estilos de Nuevo análisis, formulario amplio, entradas grandes y reglas para móviles. |
+| `CSS/resultados.css` | Estilos de las tarjetas, tabla de frecuencias, fórmulas y área del histograma. |
+| `CSS/historial.css` | Estilos de las tarjetas del historial, títulos, fechas y botón Consultar. |
 
-**Precaución:** algunos registros antiguos pueden tener medidas incompatibles con sus tablas. Esta compatibilidad respeta exactamente las medidas almacenadas, sin presentarlas como cálculos nuevos ni corregirlas automáticamente.
+### JavaScript
 
+| Archivo | Qué hace |
+| --- | --- |
+| `JAVASCRIPT/index.js` | Comprueba los valores ingresados, muestra errores, guarda temporalmente los datos en `sessionStorage` y abre Resultados. |
+| `JAVASCRIPT/resultados.js` | Solicita validación, intervalos y medidas a las APIs; presenta los datos, tarjetas y tabla; intenta llamar al módulo de Kevin; permite guardar y consultar registros. |
+| `JAVASCRIPT/historial.js` | Pide la lista a la API de Diego y construye los registros visibles del historial. |
+| `JAVASCRIPT/KevinDaniloMoralesMejia.js` | **Previsto, pero ausente:** función `dibujar_histograma_kevin(tabla)` para dibujar con Chart.js barras contiguas y escala X lineal. |
 
-### Corrección de pantalla blanca al consultar (octubre 2026)
-En `PHP/resultados.php`, la función anónima de `array_map()` debe declarar `use ($resultados)` para poder leer los límites del análisis y formar la etiqueta de la última clase. Sin ello se produce un error de PHP. **Prueba:** después de sincronizar el archivo, abrir `/resultados?id=2` y `/resultados?id=1`; deben aparecer tarjetas, tabla e histograma. Si persiste una pantalla blanca, ejecutar en el servidor (SSH) `docker compose logs --tail=80 app` y revisar el error real. Los cambios PHP no requieren reiniciar Nginx.
+### PHP
 
-## APIs independientes por integrante (20 de octubre de 2026)
+| Archivo | Qué hace |
+| --- | --- |
+| `PHP/index.php` | Conserva una versión PHP de la pantalla de entrada; la ruta pública principal sirve `HTML/index.html`. |
+| `PHP/resultados.php` | Entrega el HTML de Resultados, carga CSS, Chart.js, MathJax y los scripts de la pantalla. No debe calcular las medidas. |
+| `PHP/historial.php` | Entrega el HTML de Historial; la consulta se realiza desde JavaScript. |
+| `PHP/conexion.php` | Crea la conexión MySQL mediante `mysqli` y variables de entorno. |
+| `PHP/DiegoAlejandroVasquezYol.php` | API para guardar, listar y consultar análisis de MySQL. |
+| `PHP/JoelAdrianGalegoLopez.php` | **Previsto, ausente:** validación de título y serie numérica. |
+| `PHP/ObdulioAugustoFuentesFuentes.php` | **Previsto, ausente:** intervalos de Sturges y frecuencias. |
+| `PHP/WilliamEliazarMateoDevian.php` | **Previsto, ausente:** medidas estadísticas agrupadas. |
 
-Cada archivo PHP se ejecuta mediante una ruta Nginx pública sin exponer `/PHP/`. Los archivos son independientes como endpoints, pero la API de Diego reutiliza sus funciones con `require_once`.
+### Servidor
 
-| Integrante | Archivo | Ruta | Método |
-| --- | --- | --- | --- |
-| Joel Adrian Galego López | `PHP/JoelAdrianGalegoLopez.php` | `/api/joel-adrian-galego-lopez` | GET o POST |
-| Obdulio Augusto Fuentes Fuentes | `PHP/ObdulioAugustoFuentesFuentes.php` | `/api/obdulio-augusto-fuentes-fuentes` | GET o POST |
-| William Eliazar Mateo Devian | `PHP/WilliamEliazarMateoDevian.php` | `/api/william-eliazar-mateo-devian` | GET o POST |
-| Diego Alejandro Vásquez Yol | `PHP/DiegoAlejandroVasquezYol.php` | `/api/diego-alejandro-vasquez-yol?operacion=...` | Depende de la operación |
-| Kevin Danilo Morales Mejía | `JAVASCRIPT/KevinDaniloMoralesMejia.js` | `/JAVASCRIPT/KevinDaniloMoralesMejia.js` | Recurso JS |
+| Archivo | Qué hace |
+| --- | --- |
+| `Dockerfile` | Prepara la imagen PHP-FPM y sus extensiones. |
+| `docker-compose.yml` | Define los servicios `app` y `nginx` y sus volúmenes. |
+| `docker/nginx.conf` | Publica las rutas autorizadas, sirve CSS/JS y envía las solicitudes PHP a `app:9000`. |
 
-### Qué hace cada API y cómo probarla
+## 5. Flujo de las APIs por compañero
 
-**Joel:** lee `titulo` y `datos`; comprueba título, números, separadores, errores y máximo 10000 valores. Devuelve `correcto`, `cantidad`, `numeros` y `errores`. En el servidor (SSH):
+La arquitectura que utiliza `JAVASCRIPT/resultados.js` está pensada para que las llamadas sean **visibles por separado** en **F12 → Red → Fetch/XHR**:
 
-```bash
-curl -G --data-urlencode 'titulo=Prueba' --data-urlencode 'datos=1 -2 3.5' http://127.0.0.1:8089/api/joel-adrian-galego-lopez
+```text
+Nuevo análisis (HTML/index.html)
+          |
+          v
+JAVASCRIPT/index.js
+          |
+          v
+/resultados
+          |
+          v
+JAVASCRIPT/resultados.js
+          |
+          +-- POST /api/joel-adrian-galego-lopez
+          |         Valida título y números
+          |
+          +-- POST /api/obdulio-augusto-fuentes-fuentes
+          |         Agrupa los números y crea frecuencias
+          |
+          +-- POST /api/william-eliazar-mateo-devian
+          |         Calcula las medidas poblacionales
+          |
+          +-- JAVASCRIPT/KevinDaniloMoralesMejia.js
+          |         Dibuja el histograma (archivo ausente)
+          |
+          +-- POST /api/diego-alejandro-vasquez-yol?operacion=guardar
+                    Guarda en MySQL
+
+/historial
+    |
+    +-- GET /api/diego-alejandro-vasquez-yol?operacion=listar
+    |
+    +-- Consultar -> /resultados?id=...
+                          |
+                          +-- GET /api/diego-alejandro-vasquez-yol?operacion=consultar&id=...
 ```
 
-**Obdulio:** usa la validación de Joel y calcula rango, k de Sturges, amplitud, límites, xi, fi, Fi, hi, Hi. Prueba:
+La API de Diego **no realiza el análisis matemático**. El historial lee el JSON guardado; no recalcula los resultados.
 
-```bash
-curl -G --data-urlencode 'titulo=Prueba' --data-urlencode 'datos=0 1 2 3 4 5 6 7 8 10' http://127.0.0.1:8089/api/obdulio-augusto-fuentes-fuentes
+**Rutas configuradas en Nginx:** las cuatro rutas `/api/...` aparecen en `docker/nginx.conf`. Configurar una ruta no significa que el archivo PHP correspondiente exista: los tres endpoints matemáticos necesitan sus archivos para responder correctamente.
+
+## 6. Estadísticas que quiero mostrar
+
+Para `N` datos agrupados y una tabla de frecuencias con `fi` y marcas `xi`:
+
+| Medida | Fórmula |
+| --- | --- |
+| Rango | `R = máximo - mínimo` |
+| Clases teóricas | `1 + 3.322 × log10(N)` |
+| Clases utilizadas | `ceil(k_teórico)` cuando el rango es mayor que cero |
+| Amplitud | `A = R / k` |
+| Marca de clase | `xi = (LI + LS) / 2` |
+| Frecuencia relativa | `hi = fi / N` |
+| Frecuencia acumulada | `Fi = suma de fi hasta esa clase` |
+| Frecuencia relativa acumulada | `Hi = Fi / N` |
+| Media agrupada | `μ = Σ(fi × xi) / N` |
+| Varianza poblacional | `σ² = Σ[fi × (xi − μ)²] / N` |
+| Desviación estándar | `σ = √σ²` |
+| Asimetría | `g1 = Σ[fi × (xi − μ)³] / (N × σ³)` |
+| Curtosis | `K = Σ[fi × (xi − μ)⁴] / (N × σ⁴)` |
+| Exceso de curtosis | `Ke = K − 3` |
+
+Uso intervalos `[LI, LS)`, excepto el último `[LI, LS]`. Si todos los datos son iguales, corresponde una sola clase, amplitud cero y varianza cero; las medidas que dividen entre `σ` quedan sin definir.
+
+### Fórmulas con MathJax
+
+En `PHP/resultados.php` cargué **MathJax 3** para que las fórmulas aparezcan con fracciones, raíces, exponentes y sumatorias. En `JAVASCRIPT/resultados.js` agrego las fórmulas de las tarjetas dinámicamente y solicito su renderizado después de insertar los elementos. MathJax solo cambia la **presentación**, no el cálculo.
+
+## 7. Diseño grande para la exposición
+
+Las tres hojas CSS tienen reglas para que la presentación sea legible en un monitor o proyector. En escritorio el contenido puede ocupar hasta el **96 % del ancho**, con un límite de **1900 px**.
+
+| Elemento | Tamaño de presentación aproximado |
+| --- | --- |
+| Títulos principales | 54 px |
+| Subtítulos | 27–29 px |
+| Texto de entrada | 25 px |
+| Valores de resultados | 38 px |
+| Texto de tablas y fórmulas | 22 px |
+| Botones | 23–24 px |
+| Altura del histograma | 520 px |
+
+Las reglas para pantallas pequeñas conservan una disposición adaptable. Las páginas incluyen parámetros de versión en los enlaces CSS, como `?v=presentacion-20261020`, para ayudar a evitar estilos antiguos en la caché.
+
+**Importante:** estos son cambios en el código. No he comprobado visualmente el despliegue actual en el VPS.
+
+## 8. Datos de prueba
+
+Para comprobar el cálculo agrupado, utilizo:
+
+```text
+0 1 2 3 4 5 6 7 8 10
 ```
 
-**William:** usa los intervalos de Obdulio y calcula media, varianza poblacional, desviación, asimetría, curtosis y exceso. Prueba:
+**Resultados matemáticos esperados**, cuando los módulos estén completos:
 
-```bash
-curl -G --data-urlencode 'titulo=Prueba' --data-urlencode 'datos=0 1 2 3 4 5 6 7 8 10' http://127.0.0.1:8089/api/william-eliazar-mateo-devian
-```
+| Resultado | Valor |
+| --- | ---: |
+| N | 10 |
+| Rango | 10 |
+| k teórico | 4.322 |
+| k usado | 5 |
+| Amplitud | 2 |
+| Frecuencia por clase | 2 |
+| Media | 5 |
+| Varianza poblacional | 8 |
+| Desviación estándar | 2.8284 |
+| Asimetría | 0 |
+| Curtosis | 1.7 |
+| Exceso de curtosis | -1.3 |
 
-**Diego:** coordina `analizar`, `guardar`, `listar` y `consultar`. Para guardar y consultar usa `PHP/conexion.php`. Prueba:
+También debo probar números negativos, decimales con punto, entradas inválidas, datos idénticos y análisis históricos. **Esta tabla es una referencia matemática, no el resultado de una prueba ejecutada en el servidor.**
 
-```bash
-curl -X POST -d 'titulo=Prueba' --data-urlencode 'datos=0 1 2 3 4 5 6 7 8 10' 'http://127.0.0.1:8089/api/diego-alejandro-vasquez-yol?operacion=analizar'
-curl -X POST -d 'titulo=Prueba' --data-urlencode 'datos=0 1 2 3 4 5 6 7 8 10' 'http://127.0.0.1:8089/api/diego-alejandro-vasquez-yol?operacion=guardar'
-curl 'http://127.0.0.1:8089/api/diego-alejandro-vasquez-yol?operacion=listar'
-curl 'http://127.0.0.1:8089/api/diego-alejandro-vasquez-yol?operacion=consultar&id=1'
-```
+## 9. Cómo comprobar el sistema
 
-**Kevin:** `JAVASCRIPT/KevinDaniloMoralesMejia.js` está **conectado y en uso** desde `PHP/resultados.php`. Recibe la tabla de frecuencias mediante `dibujar_histograma_kevin(resultados.tabla)` llamada por `JAVASCRIPT/resultados.js` y dibuja el histograma con Chart.js. No utiliza `window.datos_histograma`, no recalcula frecuencias y no es una copia provisional.
+### En el navegador
 
-### Activación
+1. Abro `/index.html` y escribo un título y los datos de prueba.
+2. Pulso **Generar análisis**.
+3. En **F12 → Red → Fetch/XHR**, compruebo las peticiones a Joel, Obdulio y William. Si faltan los PHP correspondientes, debo resolverlo antes de dar por terminada la integración.
+4. Compruebo la tabla y las medidas.
+5. En **F12 → Red**, compruebo la carga de Chart.js, MathJax y del archivo de Kevin. Si falta Kevin, el histograma puede aparecer vacío.
+6. Pulso **Guardar análisis** y compruebo la petición a Diego.
+7. Abro **Historial** y compruebo `listar` y luego `consultar`.
+8. Reduzco el ancho del navegador para revisar el diseño móvil.
 
-En el servidor (SSH), una vez sincronizado el repositorio:
+### En el servidor (SSH)
+
+Desde la carpeta real del proyecto en el VPS:
 
 ```bash
 cd /home/alejo/Almacenamiento/Paginas/Proyecto_estadistica
+git status
+docker compose ps
+docker compose exec nginx nginx -t
+docker compose logs --tail=50 app
+docker compose logs --tail=50 nginx
+```
+
+Si la copia de trabajo está limpia y necesito sincronizar `master`:
+
+```bash
+git pull origin master
+```
+
+Después de modificar `docker/nginx.conf`, verifico la sintaxis y reinicio el contenedor Nginx:
+
+```bash
 docker compose exec nginx nginx -t
 docker compose restart nginx
 ```
 
-Las rutas nuevas no estarán disponibles hasta que Nginx recargue su configuración. No se modificó `docker-compose.yml`.
+Si solo modifico HTML, PHP, CSS o JavaScript, normalmente basta con recargar la página. Si modifico el `Dockerfile`, necesito reconstruir la imagen correspondiente.
 
-**Pendiente de integración:** las páginas existentes `/resultados` y `/historial` siguen usando su lógica PHP previa. La API de Diego es un endpoint independiente y aún no sustituye el flujo de esas páginas. No se han ejecutado pruebas en el VPS.
+**Mi PC y el VPS:** el directorio SSHFS montado en mi PC corresponde a los mismos archivos del servidor; no debo tratarlos como dos copias independientes.
 
-## Integración real de la pantalla Resultados con las APIs (20/10/2026)
+## 10. Guardado y seguridad
 
-**Flujo nuevo:** `HTML/index.html` y `JAVASCRIPT/index.js` guardan temporalmente el título y los datos en `sessionStorage` y abren `/resultados`, sin incluir la serie en la URL. `PHP/resultados.php` solo entrega la estructura HTML. `JAVASCRIPT/resultados.js` hace `POST /api/diego-alejandro-vasquez-yol?operacion=analizar`; la API de Diego llama las funciones de Joel (validación), Obdulio (intervalos) y William (medidas). Kevin dibuja el histograma con Chart.js usando el resultado. El botón Guardar llama `POST ...?operacion=guardar`, que inserta en MySQL a través de `conexion.php`. La consulta de un historial usa `GET ...?operacion=consultar&id=...` y muestra el JSON guardado, incluidos los formatos antiguos.
+La tabla de MySQL se llama `analisis` y utiliza los campos `id`, `titulo`, `fecha`, `datos_originales`, `criterio_clases` y `resultados`. El último guarda un JSON con los resultados para consultarlos posteriormente.
 
-**Pruebas por archivo:**
-- `HTML/index.html`: abre `/index.html`, introduce título y datos, pulsa Generar; la dirección debe cambiar a `/resultados` sin datos en la URL.
-- `JAVASCRIPT/index.js`: prueba `1 2 3` y luego `abc`; el segundo caso debe mostrar error y no navegar.
-- `PHP/resultados.php`: abre `/resultados` directamente en una pestaña nueva; debe mostrar un aviso si no hay datos guardados en esa pestaña.
-- `JAVASCRIPT/resultados.js`: en las herramientas del navegador, pestaña Red, comprueba la petición `POST /api/diego-alejandro-vasquez-yol?operacion=analizar`. Con `0 1 2 3 4 5 6 7 8 10`, N=10, k=5, R=10, A=2, media=5, varianza=8.
-- `JAVASCRIPT/KevinDaniloMoralesMejia.js`: comprueba que aparecen cinco barras contiguas; prueba también todos los números iguales.
-- `PHP/DiegoAlejandroVasquezYol.php`: pulsa Guardar y comprueba la petición `POST ...?operacion=guardar`; después consulta el ID desde el historial y revisa `GET ...?operacion=consultar&id=...`.
+La conexión se configura mediante las variables de entorno `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD`. Nunca debo escribir contraseñas reales en el repositorio.
 
-**Importante:** `PHP/historial.php` todavía obtiene la lista directamente de MySQL. Esta etapa cambia la generación y consulta de resultados, no la pantalla Historial. No se han ejecutado pruebas en el VPS. Se requiere JavaScript y almacenamiento de sesión del navegador para generar desde el formulario. Chart.js se carga desde CDN.
+Nginx bloquea el acceso directo a `/PHP/*.php` y a archivos internos. Para ejecutar PHP desde el navegador uso exclusivamente las rutas públicas configuradas.
 
+## 11. Qué falta verificar
 
-## Cambio de arquitectura: peticiones HTTP por compañero (20/10/2026)
+- [ ] Confirmar o restaurar los tres PHP de Joel, Obdulio y William.
+- [ ] Confirmar o restaurar `JAVASCRIPT/KevinDaniloMoralesMejia.js`.
+- [ ] Resolver la referencia antigua `/JAVASCRIPT/chart.umd.js` y comprobar la carga efectiva de Chart.js.
+- [ ] Probar el renderizado dinámico de MathJax.
+- [ ] Comprobar que el diseño grande se vea en el VPS y en el proyector.
+- [ ] Probar el guardado y la consulta real en MySQL.
+- [ ] Confirmar si los manuales Markdown deben restaurarse en `master`.
 
-**Este apartado reemplaza el flujo anterior de la API coordinadora de Diego.** La pantalla `/resultados` realiza tres peticiones visibles en F12 > Red > Fetch/XHR, en orden: `POST /api/joel-adrian-galego-lopez` con `titulo` y `datos`; `POST /api/obdulio-augusto-fuentes-fuentes` con `numeros` (JSON del arreglo validado); `POST /api/william-eliazar-mateo-devian` con `intervalos` (JSON devuelto por Obdulio). JavaScript únicamente reúne las respuestas y muestra la tabla, tarjetas e histograma con el módulo de Kevin. **No recalcula las estadísticas.**
-
-La API de Diego **ya no tiene operación analizar** y no incluye archivos de Joel, Obdulio ni William. Solo gestiona `POST ...?operacion=guardar` (recibe `titulo`, `datos`, `resultados` JSON), `GET ...?operacion=listar` y `GET ...?operacion=consultar&id=2`. El historial ahora se construye con JavaScript después de llamar a la operación `listar`. Los registros antiguos siguen consultables con la adaptación de presentación en `resultados.js`.
-
-### Pruebas por archivo
-
-- `PHP/JoelAdrianGalegoLopez.php`: envía título y datos, verifica la respuesta `numeros` y prueba valores inválidos.
-- `PHP/ObdulioAugustoFuentesFuentes.php`: envía `numeros=[0,1,2,3,4,5,6,7,8,10]`; verifica N=10, k=5, R=10, amplitud=2 y cinco frecuencias de 2.
-- `PHP/WilliamEliazarMateoDevian.php`: envía el JSON de Obdulio en `intervalos`; verifica media=5, varianza=8, desviación≈2.8284, asimetría=0, curtosis=1.7, exceso=-1.3.
-- `JAVASCRIPT/resultados.js`: genera un análisis en el navegador y comprueba las tres solicitudes POST independientes en la pestaña Red; el botón Guardar genera una cuarta solicitud a Diego.
-- `PHP/DiegoAlejandroVasquezYol.php`: guarda un análisis y consulta la lista y su ID; verifica que no aparezca la operación `analizar`.
-- `PHP/historial.php` y `JAVASCRIPT/historial.js`: abre `/historial`; en Red debe aparecer `GET ...?operacion=listar`; Consultar abre `/resultados?id=...` y solicita `consultar`.
-
-No hay cambios en Nginx ni en Docker Compose porque las rutas ya existían. **Pendiente:** ejecutar pruebas en el VPS y verificar que las APIs y la conexión MySQL responden correctamente. No usar los ejemplos antiguos de este README que envían `datos` directamente a Obdulio o William.
-
-
-## Limpieza de archivos y módulo de Kevin (20/10/2026)
-
-- **En uso:** `HTML/index.html`; `PHP/resultados.php`, `PHP/historial.php`, `PHP/conexion.php` y las cuatro APIs por compañero; `CSS/index.css`, `CSS/resultados.css`, `CSS/historial.css`; `JAVASCRIPT/index.js`, `JAVASCRIPT/resultados.js`, `JAVASCRIPT/historial.js` y `JAVASCRIPT/KevinDaniloMoralesMejia.js`.
-- **Eliminados:** `HTML/resultados.html` y `HTML/historial.html`, porque eran maquetas duplicadas sin participación en el flujo actual.
-- **Kevin:** `PHP/resultados.php` carga Chart.js, luego `KevinDaniloMoralesMejia.js` y `resultados.js`. Cuando llegan las respuestas de las APIs, `resultados.js` invoca `dibujar_histograma_kevin(resultados.tabla)`. El histograma muestra barras contiguas con límites de clase en el eje X. El código de Kevin no calcula estadísticas.
-- **Prueba:** abre `/index.html`, introduce `0 1 2 3 4 5 6 7 8 10` y pulsa Generar. En `/resultados` comprueba cinco barras contiguas con frecuencias 2, y en F12 > Red comprueba la carga de `KevinDaniloMoralesMejia.js` y las tres peticiones de Joel, Obdulio y William.
-- **Nginx:** se retiraron solo las dos rutas de las maquetas eliminadas. Tras sincronizar los cambios, en el servidor (SSH), desde la carpeta del proyecto, ejecuta `docker compose exec nginx nginx -t` y, si pasa, `docker compose restart nginx`. No se modificó `docker-compose.yml`.
-
-Las descripciones históricas de etapas anteriores en este README pueden referirse a implementaciones reemplazadas; la sección **Cambio de arquitectura: peticiones HTTP por compañero** y esta sección describen el funcionamiento actual.
+No modifico las APIs ni el diseño al actualizar este documento: solo describo lo que existe y lo que todavía necesita verificación.
